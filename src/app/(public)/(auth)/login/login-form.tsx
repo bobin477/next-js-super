@@ -16,6 +16,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useLoginMutation } from "@/app/useQueries/authQueries";
 import { toast } from "@/hooks/use-toast";
 import { handleErrorApi } from "@/lib/utils";
+import { useRouter } from "next/navigation";
 
 export default function LoginForm() {
   const loginMutation = useLoginMutation();
@@ -26,7 +27,7 @@ export default function LoginForm() {
       password: "",
     },
   });
-
+  const router = useRouter();
   const onSubmit = async (data: LoginBodyType) => {
     try {
       if (loginMutation.isPending) return;
@@ -35,6 +36,7 @@ export default function LoginForm() {
       toast({
         description: result.payload.message,
       });
+      router.push("/manage/dashboard");
     } catch (error: any) {
       handleErrorApi({
         error,
