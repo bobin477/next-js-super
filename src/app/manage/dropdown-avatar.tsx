@@ -13,13 +13,16 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useLogoutMutation } from "@/app/useQueries/authQueries";
 import { handleErrorApi } from "@/lib/utils";
-const account = {
-  name: "Nguyễn Văn A",
-  avatar: "https://i.pravatar.cc/150",
-};
+import { useAccountProfile } from "@/app/useQueries/accountQueries";
+
 export default function DropdownAvatar() {
   const router = useRouter();
   const logoutMutation = useLogoutMutation();
+  const { data } = useAccountProfile();
+  const account = data?.payload.data;
+
+  console.log(account);
+
   const logout = async () => {
     try {
       await logoutMutation.mutateAsync();
@@ -40,15 +43,18 @@ export default function DropdownAvatar() {
           className="overflow-hidden rounded-full"
         >
           <Avatar>
-            <AvatarImage src={account.avatar ?? undefined} alt={account.name} />
+            <AvatarImage
+              src={account?.avatar ?? undefined}
+              alt={account?.name}
+            />
             <AvatarFallback>
-              {account.name.slice(0, 2).toUpperCase()}
+              {account?.name.slice(0, 2).toUpperCase()}
             </AvatarFallback>
           </Avatar>
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end">
-        <DropdownMenuLabel>{account.name}</DropdownMenuLabel>
+        <DropdownMenuLabel>{account?.name}</DropdownMenuLabel>
         <DropdownMenuSeparator />
         <DropdownMenuItem asChild>
           <Link href={"/manage/setting"} className="cursor-pointer">
