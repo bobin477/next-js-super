@@ -10,6 +10,9 @@ import {
 } from "@/schemaValidations/account.schema";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Form, FormField, FormItem, FormMessage } from "@/components/ui/form";
+import { useChangePassword } from "@/app/useQueries/accountQueries";
+import { toast } from "@/hooks/use-toast";
+import { handleErrorApi } from "@/lib/utils";
 export default function ChangePasswordForm() {
   const form = useForm<ChangePasswordBodyType>({
     resolver: zodResolver(ChangePasswordBody),
@@ -19,11 +22,44 @@ export default function ChangePasswordForm() {
       confirmPassword: "",
     },
   });
+
+  const changePasswordMutation = useChangePassword();
+
+  const onSubmit = async (body: ChangePasswordBodyType) => {
+    try {
+      const result = await changePasswordMutation.mutateAsync(body);
+      toast({
+        description: result.payload.message,
+      });
+      form.reset({
+        confirmPassword: "",
+        oldPassword: "",
+        password: "",
+      });
+    } catch (error) {
+      handleErrorApi({
+        error,
+        setError: form.setError,
+      });
+    }
+  };
+
+  const reset = () => {
+    form.reset({
+      confirmPassword: "",
+      oldPassword: "",
+      password: "",
+    });
+  };
+
   return (
     <Form {...form}>
       <form
         noValidate
         className="grid auto-rows-max items-start gap-4 md:gap-8"
+        onSubmit={form.handleSubmit(onSubmit, (err) => {
+          console.log(err);
+        })}
       >
         <Card className="overflow-hidden" x-chunk="dashboard-07-chunk-4">
           <CardHeader>
@@ -88,11 +124,18 @@ export default function ChangePasswordForm() {
                   </FormItem>
                 )}
               />
-              <div className=" items-center gap-2 md:ml-auto flex">
-                <Button variant="outline" size="sm">
+              <div className="items-center gap-2 md:ml-auto flex">
+                <Button
+                  variant="outline"
+                  size="sm"
+                  type="reset"
+                  onClick={reset}
+                >
                   Hủy
                 </Button>
-                <Button size="sm">Lưu thông tin</Button>
+                <Button size="sm" type="submit">
+                  Lưu thông tin
+                </Button>
               </div>
             </div>
           </CardContent>
