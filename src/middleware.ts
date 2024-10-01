@@ -1,20 +1,22 @@
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 
-const privatePath = ["/manage"];
-const authPath = ["/login"];
+const privatePaths = ["/manage"];
+const unAuthPaths = ["/login"];
 // This function can be marked `async` if using `await` inside
 export function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
+
   const isAuth = Boolean(request.cookies.get("accessToken"));
-  console.log(request.url);
-  if (!isAuth && privatePath.some((path) => pathname.startsWith(path))) {
+  console.log(isAuth);
+  if (!isAuth && privatePaths.some((path) => pathname.startsWith(path))) {
     return NextResponse.redirect(new URL("/login", request.url));
   }
 
-  if (isAuth && authPath.some((path) => pathname.startsWith(path))) {
+  if (isAuth && unAuthPaths.some((path) => pathname.startsWith(path))) {
     return NextResponse.redirect(new URL("/", request.url));
   }
+
   return NextResponse.next();
 }
 
