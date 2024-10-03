@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import authApiRequest from "@/apiRequest/auth";
 import { cookies } from "next/headers";
 export async function POST(request: Request) {

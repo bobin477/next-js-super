@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { toast } from "@/hooks/use-toast";
 import { EntityError } from "@/lib/http";
 import { clsx, type ClassValue } from "clsx";
